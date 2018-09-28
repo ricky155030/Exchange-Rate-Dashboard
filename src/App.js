@@ -24,8 +24,7 @@ class App extends Component {
                 Exchange Rate
               </Header>
               <Menu attached="top">
-                <Menu.Item>Current</Menu.Item>
-                <Menu.Item>History</Menu.Item>
+                <Menu.Item>Summary</Menu.Item>
               </Menu>
               <Content basic>
                 <Summary />
