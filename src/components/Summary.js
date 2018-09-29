@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { isInteger } from 'lodash'
-import { Input, Segment, Button } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
+import { isInteger, get } from 'lodash'
+import { Input, Segment, Grid, Button, Icon, Popup } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { fetchExchangeRateCurrent } from '../services/currency'
 import Table from './Table'
@@ -33,6 +34,27 @@ class Summary extends Component {
 
   }
 
+  generateTrendIcon = (todayRate, yesterdayRate) => {
+    const trigger = (
+      <b>{ todayRate > yesterdayRate ? <Icon size="large" name="caret square up" color="red" /> : <Icon size="large" name="caret square down" color="green" /> }</b>
+    )
+
+    const content = (
+      <div>
+        <b>前一日現金匯率</b>
+        <br />
+        { yesterdayRate }
+      </div>
+    )
+
+    return (
+      <Popup
+        trigger={trigger}
+        content={content}
+      />
+    )
+  }
+
   generateColumn() {
     const {
       twd
@@ -40,9 +62,22 @@ class Summary extends Component {
 
     return [
       {
+        name: '',
+        index: '',
+        render: d => (
+          <div>
+            { this.generateTrendIcon(d.cash_rate, d.cash_rate_prev) }
+          </div>
+        )
+      },
+      {
         name: '幣別',
         index: 'symbol',
-        render: d => <b>{ d.symbol }</b>
+        render: d => (
+          <Link to={`/currency/${d.symbol}`}>
+            <b>{ d.symbol }</b>
+          </Link>
+        )
       },
       {
         name: '現金匯率',
@@ -86,7 +121,7 @@ class Summary extends Component {
   }
 
   handleInputChange = e => {
-    const twd = parseInt(e.target.value)
+    const twd = parseInt(e.target.value, 10)
     if(!isInteger(twd)) {
       return 
     }
@@ -103,11 +138,25 @@ class Summary extends Component {
 
     return (
       <Segment loading={isLoading} basic>
-        <Label>TWD $</Label>
-        <Input value={twd} onChange={this.handleInputChange} />
-        <Button size="mini" onClick={this.reload} floated="right">
-          Reload
-        </Button>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column>
+              <Label>TWD $</Label>
+              <Input value={twd} onChange={this.handleInputChange} />
+              <Button size="mini" onClick={this.reload} floated="right">
+                Reload
+              </Button>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <b>
+                資料日期: 
+                { get(data, '0.date') }
+              </b>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
         <Table
           data={data}
           columns={this.generateColumn()}
