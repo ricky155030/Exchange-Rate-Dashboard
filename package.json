@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "date-fns": "^2.0.0-alpha.18",
+    "echarts": "^4.2.0-rc.1",
     "echarts-for-react": "^2.0.15-beta.0",
     "lodash": "^4.17.11",
     "react": "^16.5.2",

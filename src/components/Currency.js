@@ -1,10 +1,21 @@
 import React, { Component } from 'react'
-import { size, get, isInteger } from 'lodash'
-import { Icon, Divider, Header, Input, Segment, Grid, Statistic } from 'semantic-ui-react'
+import { parse, isAfter, subDays } from 'date-fns'
+import { size, get, isInteger, chain } from 'lodash'
+import { Icon, Button, Divider, Header, Input, Segment, Grid, Statistic } from 'semantic-ui-react'
 import Trend from './Trend'
+import Echarts from 'echarts-for-react'
+
+const RANGE = {
+  '3d': { name: '3d', days: 3, displayName: '3 days' },
+  '1w': { name: '1w', days: 7, displayName: '1 week' },
+  '1m': { name: '1m', days: 30, displayName: '1 month' },
+  '3m': { name: '3m', days: 90, displayName: '3 months' },
+  '6m': { name: '6m', days: 180, displayName: '6 months' }
+}
 
 class Currency extends Component {
   state = {
+    duration: '6m',
     twd: 10000,
     isLoading: false
   }
@@ -39,13 +50,90 @@ class Currency extends Component {
     })
   }
 
+  getChartOption() {
+    const {
+      data
+    } = this.props
+
+    const {
+      duration
+    } = this.state
+
+    let chartData = []
+    let max = 0
+    let min = 9999999
+    const compareDate = subDays(new Date(), RANGE[duration].days)
+
+    chain(data)
+      .get(`${this.symbol}`, [])
+      .some(d => {
+        const date = parse(d.date, 'yyyyMMdd', new Date())
+
+        chartData.push({
+          name: d.date,
+          value: d.cash_rate
+        })
+
+        return date <= compareDate
+      })
+      .value()
+
+    chartData.forEach(d => {
+      if(d.value < min) {
+        min = d.value
+      }
+
+      if(d.value > max) {
+        max = d.value
+      }
+    })
+
+    return {
+      toolbox: {
+        feature: {
+          saveAsImage: {
+            pixelRatio: 2
+          }
+        }
+      },
+      tooltip: {},
+      xAxis: {
+        type: 'category',
+        data: chartData.map(d => d.name),
+        splitLine: {
+          show: false
+        }
+      },
+      yAxis: {
+        min:  parseFloat((min - (max - min) / 2).toPrecision(12)),
+        max,
+        type: 'value',
+      },
+      series: [
+        {
+          name: 'bar',
+          type: 'bar',
+          data: chartData.map(d => d.value),
+          animationDelay: function (idx) {
+            return idx * 10;
+          }
+        }
+      ],
+      animationEasing: 'elasticOut',
+      animationDelayUpdate: function (idx) {
+        return idx * 5;
+      }
+    }
+  }
+
   content() {
     const {
       data
     } = this.props
 
     const {
-      twd
+      twd,
+      duration
     } = this.state
 
     return (
@@ -107,11 +195,21 @@ class Currency extends Component {
               <Icon name="chart line" />
               匯率趨勢圖
             </Header>
+            <Button.Group>
+              {
+                chain(RANGE)
+                  .map(r => <Button basic={duration !== r.name} color="blue" onClick={() => this.handleDurationChange(r.name)}>{ r.displayName }</Button>)
+                  .value()
+              }
+            </Button.Group>
+            <Echarts option={this.getChartOption()} />
           </Grid.Column>
         </Grid.Row>
       </Grid>
     )
   }
+
+  handleDurationChange = duration => this.setState({ duration })
 
   handleInputChange = e => {
     let twd = parseInt(e.target.value, 10)
