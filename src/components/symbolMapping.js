@@ -1,0 +1,21 @@
+export default {
+	USD: 'us',
+	HKD: 'hk',
+	GBP: 'uk',
+	AUD: 'au',
+	CAD: 'ca',
+	SGD: 'sg',
+	CHF: 'ch',
+	JPY: 'jp',
+	ZAR: 'za',
+	SEK: 'se',
+	NZD: 'nz',
+	THB: 'th',
+	PHP: 'ph',
+	IDR: 'id',
+	EUR: 'eu',
+	KRW: 'kr',
+	VND: 'vn',
+	MYR: 'my',
+	CNY: 'cn'
+}

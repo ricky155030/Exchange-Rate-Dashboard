@@ -3,8 +3,8 @@ import { Route, Link, Switch } from 'react-router-dom'
 import { Header, Grid, Icon, Segment, Menu } from 'semantic-ui-react'
 import styled from 'styled-components'
 
-import Summary from './components/Summary'
-import Currency from './components/Currency'
+import Summary from './containers/SummaryContainer'
+import Currency from './containers/CurrencyContainer'
 import NotFound from './components/NotFound'
 
 const Container = styled.div`

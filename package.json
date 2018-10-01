@@ -4,11 +4,16 @@
   "private": true,
   "dependencies": {
     "date-fns": "^2.0.0-alpha.18",
+    "echarts-for-react": "^2.0.15-beta.0",
     "lodash": "^4.17.11",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.5",
+    "redux": "^4.0.0",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0",
     "semantic-ui-css": "^2.4.0",
     "semantic-ui-react": "^0.82.5",
     "styled-components": "^3.4.9"

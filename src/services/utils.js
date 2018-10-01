@@ -1,16 +1,16 @@
-import { format, subDays, isWeekend } from 'date-fns'
+import { format, subDays, subHours, isWeekend } from 'date-fns'
 
 export function getRecentlyBusinessDay() {
-  let first = format(new Date(), 'yyyy-MM-dd')
+  let first = format(subHours(new Date(), 9), 'yyyy-MM-dd')
 
   while(isWeekend(first)) {
-    first = format(subDays(new Date(), 1), 'yyyy-MM-dd')
+    first = format(subDays(first, 1), 'yyyy-MM-dd')
   }
 
   let second = format(subDays(first, 1), 'yyyy-MM-dd')
 
   while(isWeekend(second)) {
-    first = format(subDays(new Date(), 1), 'yyyy-MM-dd')
+    second = format(subDays(second, 1), 'yyyy-MM-dd')
   }
 
   return {

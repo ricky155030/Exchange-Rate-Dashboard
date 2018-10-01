@@ -3,10 +3,6 @@ import { Message } from 'semantic-ui-react'
 
 class NotFound extends Component {
   render() {
-    const {
-      match
-    } = this.props
-
     return (
       <Message
         negative

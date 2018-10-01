@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { isInteger, get } from 'lodash'
-import { Input, Segment, Grid, Button, Icon, Popup } from 'semantic-ui-react'
+import { Message, Flag, Input, Segment, Grid, Button, Icon, Popup } from 'semantic-ui-react'
 import styled from 'styled-components'
-import { fetchExchangeRateCurrent } from '../services/currency'
+
+import symbolMapping from './symbolMapping'
 import Table from './Table'
+import Trend from './Trend'
 
 const Label = styled.div`
   font-weight: bold;
@@ -14,24 +16,36 @@ const Label = styled.div`
 class Summary extends Component {
   state = {
     data: [],
-    isLoading: true,
+    err: null,
+    isLoading: false,
     twd: 10000
   }
 
   componentDidMount() {
-    this.reload()
+    const {
+      data
+    } = this.props
+
+    if(data.length === 0) {
+      this.reload()
+    }
   }
 
   reload = async () => {
     this.setState({ isLoading: true })
 
-    const data = await fetchExchangeRateCurrent()
-
-    this.setState({ 
-      data,
-      isLoading: false
-    })
-
+    try {
+      await this.props.fetchSummaryData()
+      this.setState({ 
+        err: null,
+        isLoading: false 
+      })
+    } catch (e) {
+      this.setState({ 
+        err: e.message,
+        isLoading: false 
+      })
+    }
   }
 
   generateTrendIcon = (todayRate, yesterdayRate) => {
@@ -65,9 +79,10 @@ class Summary extends Component {
         name: '',
         index: '',
         render: d => (
-          <div>
-            { this.generateTrendIcon(d.cash_rate, d.cash_rate_prev) }
-          </div>
+          <Trend
+            today={d.cash_rate}
+            prev={d.cash_rate_prev}
+          />
         )
       },
       {
@@ -75,6 +90,7 @@ class Summary extends Component {
         index: 'symbol',
         render: d => (
           <Link to={`/currency/${d.symbol}`}>
+            <Flag name={symbolMapping[d.symbol]} />
             <b>{ d.symbol }</b>
           </Link>
         )
@@ -132,35 +148,55 @@ class Summary extends Component {
   render() {
     const {
       twd,
-      data,
+      err,
       isLoading
     } = this.state
 
+    const {
+      data
+    } = this.props
+
     return (
       <Segment loading={isLoading} basic>
-        <Grid>
-          <Grid.Row>
-            <Grid.Column>
-              <Label>TWD $</Label>
-              <Input value={twd} onChange={this.handleInputChange} />
-              <Button size="mini" onClick={this.reload} floated="right">
-                Reload
-              </Button>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <b>
-                資料日期: 
-                { get(data, '0.date') }
-              </b>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-        <Table
-          data={data}
-          columns={this.generateColumn()}
-        />
+        {
+          err &&
+          <Message negative>
+            <Message.Header>
+              { err }
+            </Message.Header>
+            <a onClick={this.reload} href="#">
+              Retry
+            </a>
+          </Message>
+        }
+        {
+          !err &&
+          <div>
+            <Grid>
+              <Grid.Row>
+                <Grid.Column>
+                  <Label>TWD $</Label>
+                  <Input value={twd} onChange={this.handleInputChange} />
+                  <Button size="mini" onClick={this.reload} floated="right">
+                    Reload
+                  </Button>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column>
+                  <b>
+                    資料日期: 
+                    { get(data, '0.date') }
+                  </b>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Table
+              data={data}
+              columns={this.generateColumn()}
+            />
+          </div>
+        }
       </Segment>
     )
   }
