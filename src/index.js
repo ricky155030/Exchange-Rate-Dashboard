@@ -6,6 +6,7 @@ import './index.css'
 import 'semantic-ui-css/semantic.min.css'
 import App from './App'
 import configureStore from './store/configureStore'
+import { basename } from './config'
 
 // // EChart
 // import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -16,7 +17,7 @@ const store = configureStore()
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router>
+    <Router basename={basename}>
       <App />
     </Router>
   </Provider>,

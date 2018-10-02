@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { parse, isAfter, subDays } from 'date-fns'
+import { parse, subDays } from 'date-fns'
 import { size, get, isInteger, chain } from 'lodash'
 import { Icon, Button, Divider, Header, Input, Segment, Grid, Statistic } from 'semantic-ui-react'
 import Trend from './Trend'
@@ -99,7 +99,7 @@ class Currency extends Component {
       tooltip: {},
       xAxis: {
         type: 'category',
-        data: chartData.map(d => d.name),
+        data: chartData.map(d => d.name).reverse(),
         splitLine: {
           show: false
         }
@@ -113,7 +113,7 @@ class Currency extends Component {
         {
           name: 'bar',
           type: 'bar',
-          data: chartData.map(d => d.value),
+          data: chartData.map(d => d.value).reverse(),
           animationDelay: function (idx) {
             return idx * 10;
           }

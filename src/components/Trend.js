@@ -1,6 +1,5 @@
-import React, { Component } from 'react'
-import { size, get } from 'lodash'
-import { Icon, Header, Input, Segment, Grid, Statistic } from 'semantic-ui-react'
+import React from 'react'
+import { Icon } from 'semantic-ui-react'
 
 export default function Trend(props) {
   const {
