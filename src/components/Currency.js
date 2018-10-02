@@ -3,7 +3,12 @@ import { parse, subDays } from 'date-fns'
 import { size, get, isInteger, chain } from 'lodash'
 import { Icon, Button, Divider, Header, Input, Segment, Grid, Statistic } from 'semantic-ui-react'
 import Trend from './Trend'
-import Echarts from 'echarts-for-react'
+
+// // EChart
+import echarts from 'echarts/lib/echarts'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/component/tooltip';
+import Echarts from 'echarts-for-react/lib/core'
 
 const RANGE = {
   '3d': { name: '3d', days: 3, displayName: '3 days' },
@@ -89,13 +94,6 @@ class Currency extends Component {
     })
 
     return {
-      toolbox: {
-        feature: {
-          saveAsImage: {
-            pixelRatio: 2
-          }
-        }
-      },
       tooltip: {},
       xAxis: {
         type: 'category',
@@ -202,7 +200,10 @@ class Currency extends Component {
                   .value()
               }
             </Button.Group>
-            <Echarts option={this.getChartOption()} />
+            <Echarts 
+              echarts={echarts}
+              option={this.getChartOption()} 
+            />
           </Grid.Column>
         </Grid.Row>
       </Grid>

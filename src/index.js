@@ -8,11 +8,6 @@ import App from './App'
 import configureStore from './store/configureStore'
 import { basename } from './config'
 
-// // EChart
-// import ReactEchartsCore from 'echarts-for-react/lib/core'
-// import echarts from 'echarts/lib/echarts'
-// import 'echarts/lib/chart/line'
-
 const store = configureStore()
 
 ReactDOM.render(

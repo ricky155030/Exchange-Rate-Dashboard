@@ -1,1 +1,1 @@
-export const basename = 'exchange-rate-dashboard'
+export const basename = '/exchange-rate-dashboard'
